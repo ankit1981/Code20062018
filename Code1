@@ -64,5 +64,5 @@ SELECT DISTINCT wc_delivery_dtls_f.fm_serial_number product_serial_num ,
           AND wc_delivery_dtls_f.customer_bill_to_loc_wid = w_customer_loc_d1.row_wid
           AND wc_delivery_dtls_f.inventory_product_wid = w_inventory_product_d.row_wid
           AND length(wc_delivery_dtls_f.fm_serial_number) <= 25
-          AND wc_delivery_dtls_f.fm_serial_number = 'G16C127148' 
+          --AND wc_delivery_dtls_f.fm_serial_number = 'G16C127148' 
 		  
