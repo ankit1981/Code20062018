@@ -1,0 +1,68 @@
+=== CGT  ========================================================================
+
+SELECT DISTINCT wc_delivery_dtls_f.fm_serial_number product_serial_num ,
+         DECODE(INSTR(w_product_d.part_num, '~TO BE DEFINED', 1), 0, SUBSTR(w_product_d.part_num, 1, 25), 'TBD') model_no,
+         'M' mfgordtyp_code,
+         'Made to Stock' mfgordtyp_description,
+         wc_delivery_dtls_f.sales_order_num sales_order,
+         TO_CHAR(TO_DATE(wc_delivery_dtls_f.shipped_on_dt_wid, 'YYYYMMDD') -1, 'DD-MON-RR') finish_paint_date,
+         TO_CHAR(TO_DATE(wc_delivery_dtls_f.shipped_on_dt_wid, 'YYYYMMDD'), 'DD-MON-RR') ship_date,
+         TO_CHAR(TO_DATE(wc_delivery_dtls_f.shipped_on_dt_wid, 'YYYYMMDD') -1, 'DD-MON-RR') final_assembly_date,
+         w_org_d.customer_num customer_number,
+         'ABG' business_group,
+         'Y' warranty_ind ,
+         SUBSTR(TO_CHAR(wc_delivery_dtls_f.invoiced_on_dt_wid), 1, 8) owner_purchase_date,
+         SUBSTR(w_org_d.name, 1, 50) owner_name,
+         SUBSTR(w_org_d.st_address, 1, 100) owner_addr1,
+         SUBSTR(w_org_d.city, 1, 30) owner_city,
+         SUBSTR(w_org_d.state, 1, 15) owner_st_code,
+         SUBSTR(w_org_d.zipcode, 1, 15) owner_zip_code,
+         w_org_d.country owner_country_code,
+         w_day_d.per_name_fscl_mnth acctg_month_build_date,
+         w_int_org_d1.org_num build_org,
+         w_int_org_d2.org_num organization_id,
+         w_gl_account_d.account_seg2_code responsibility_code,
+         UPPER(DECODE(INSTR(w_product_d.prod_hier2_code, '~TO BE DEFINED', 1), 0, SUBSTR(w_product_d.prod_hier2_code, 1, 25), 'TBD')) product_family_code,
+         'ALTERNATOR' equipment_type,
+          '0' product_rating ,
+         SUBSTR(w_customer_loc_d.st_address1, 1, 100) equipment_address1,
+         SUBSTR(w_customer_loc_d.city, 1, 30) equipment_city,
+         SUBSTR(w_customer_loc_d.state_code, 1, 15) equipment_state,
+         SUBSTR(w_customer_loc_d.postal_code, 1, 15) equipment_zip,
+         SUBSTR(w_customer_loc_d.country_code, 1, 15) equipment_country,
+         REPLACE(SUBSTR (fm_serial_number, 1, 1), 'L', 'M')  plant_code,  
+         DECODE(INSTR(w_product_d.prod_hier2_code, '~TO BE DEFINED', 1), 0, SUBSTR(w_product_d.prod_hier2_code, 1, 25), 'TBD') service_model_code,
+         SUBSTR(w_inventory_product_d.product_desc, 14, 50)  service_model_name,
+         w_org_d.name customer_name,
+         w_customer_loc_d1.country_code  territory_code,
+         w_org_d.customer_num  in_ship_to_cust_no,
+         NVL(wc_delivery_dtls_f.warr_last_chg_user, 'DWH') update_user,
+         wc_delivery_dtls_f.w_update_dt update_date
+         FROM w_inventory_product_d,
+         w_customer_loc_d,
+         w_customer_loc_d w_customer_loc_d1,
+         wc_delivery_dtls_f,
+         w_product_d,
+         w_gl_account_d,
+         w_org_d,
+         w_day_d,
+         w_int_org_d w_int_org_d1,
+         w_int_org_d w_int_org_d2
+          WHERE wc_delivery_dtls_f.datasource_num_id IN ('10','11','12','13','14','15','16','17')    
+          AND wc_delivery_dtls_f.fm_serial_number != '10001'
+          AND wc_delivery_dtls_f.shipped_on_dt_wid IS NOT NULL
+          AND wc_delivery_dtls_f.shipped_on_dt_wid <> 0
+         -- AND TRUNC(wc_delivery_dtls_f.w_update_dt) between '1-JAN-16' and '2-JAN-16'
+          AND upper(w_org_d.cust_type_name) in ('EXTERNAL','INTER PGBU','INTRA CGT','~TO BE DEFINED')
+          AND wc_delivery_dtls_f.x_alternator_plant_ou_wid = w_int_org_d1.row_wid(+)
+          AND wc_delivery_dtls_f.sales_org_wid = w_int_org_d2.row_wid(+)
+          AND wc_delivery_dtls_f.shipped_on_dt_wid = w_day_d.row_wid
+          AND wc_delivery_dtls_f.customer_wid = w_org_d.row_wid
+          AND wc_delivery_dtls_f.gl_account_wid = w_gl_account_d.row_wid(+)
+          AND wc_delivery_dtls_f.product_wid = w_product_d.row_wid
+          AND wc_delivery_dtls_f.customer_ship_to_loc_wid = w_customer_loc_d.row_wid
+          AND wc_delivery_dtls_f.customer_bill_to_loc_wid = w_customer_loc_d1.row_wid
+          AND wc_delivery_dtls_f.inventory_product_wid = w_inventory_product_d.row_wid
+          AND length(wc_delivery_dtls_f.fm_serial_number) <= 25
+          AND wc_delivery_dtls_f.fm_serial_number = 'G16C127148' 
+		  
