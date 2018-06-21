@@ -48,7 +48,7 @@ SELECT DISTINCT wc_delivery_dtls_f.fm_serial_number product_serial_num ,
          w_day_d,
          w_int_org_d w_int_org_d1,
          w_int_org_d w_int_org_d2
-          WHERE wc_delivery_dtls_f.datasource_num_id IN ('10')    
+          WHERE wc_delivery_dtls_f.datasource_num_id IN ('10','12')    
           AND wc_delivery_dtls_f.fm_serial_number != '10001'
           AND wc_delivery_dtls_f.shipped_on_dt_wid IS NOT NULL
           AND wc_delivery_dtls_f.shipped_on_dt_wid <> 0
